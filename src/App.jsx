@@ -4,6 +4,7 @@ import SocialProof from "./components/SocialProof";
 import About from "./components/About";
 import Services from "./components/Services";
 import Differentials from "./components/Differentials";
+import Testimonials from "./components/Testimonials";
 import ScheduleForm from "./components/ScheduleForm";
 import Footer from "./components/Footer";
 
@@ -17,6 +18,7 @@ export default function App() {
         <About />
         <Services />
         <Differentials />
+        <Testimonials />
         <ScheduleForm />
       </main>
       <Footer />
