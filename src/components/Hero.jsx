@@ -1,7 +1,18 @@
 import { useEffect, useRef, useState } from "react";
 import { Star, CalendarHeart, MessageCircle } from "lucide-react";
 import logo from "../assets/logo.png";
+import { CLINIC_PHOTOS } from "../data/photos";
 import { directWhatsAppUrl } from "../utils/whatsapp";
+
+// Altura "natural" (não colapsada) da galeria de fotos por breakpoint,
+// em px — usada para animar o colapso de altura junto com o fade.
+const GALLERY_HEIGHT = { base: 144, sm: 176, md: 208 };
+
+function galleryBaseHeight() {
+  if (window.innerWidth >= 768) return GALLERY_HEIGHT.md;
+  if (window.innerWidth >= 640) return GALLERY_HEIGHT.sm;
+  return GALLERY_HEIGHT.base;
+}
 
 // Altura extra de scroll que alimenta a animação de encolher a marca.
 // 180vh de seção com um wrapper sticky de 100vh dá ~80vh de "range" de scroll.
@@ -12,6 +23,7 @@ export default function Hero() {
   const logoRef = useRef(null);
   const leftBadgeRef = useRef(null);
   const rightBadgeRef = useRef(null);
+  const galleryRef = useRef(null);
   const contentRef = useRef(null);
   const [reduced, setReduced] = useState(false);
 
@@ -31,6 +43,7 @@ export default function Hero() {
     const content = contentRef.current;
     const leftBadge = leftBadgeRef.current;
     const rightBadge = rightBadgeRef.current;
+    const gallery = galleryRef.current;
     if (!section || !logo || !content) return;
 
     let rafId = null;
@@ -60,6 +73,16 @@ export default function Hero() {
         rightBadge.style.opacity = String(badgeOpacity);
         rightBadge.style.transform = `translateX(${badgeShift}px)`;
         rightBadge.style.pointerEvents = badgeOpacity < 0.05 ? "none" : "auto";
+      }
+
+      // Galeria de fotos some junto com os selos, colapsando de altura
+      // (não só opacidade) para abrir espaço para o texto que vem a seguir.
+      if (gallery) {
+        const baseHeight = galleryBaseHeight();
+        gallery.style.height = `${baseHeight * badgeOpacity}px`;
+        gallery.style.marginTop = `${28 * badgeOpacity}px`;
+        gallery.style.opacity = String(badgeOpacity);
+        gallery.style.pointerEvents = badgeOpacity < 0.05 ? "none" : "auto";
       }
 
       // Texto revela na segunda metade do scroll.
@@ -134,6 +157,15 @@ export default function Hero() {
           </div>
         </div>
 
+        {!reduced && (
+          <div
+            ref={galleryRef}
+            className="mt-7 h-36 w-full max-w-3xl overflow-hidden sm:h-44 md:h-52"
+          >
+            <PhotoGallery />
+          </div>
+        )}
+
         <div
           ref={contentRef}
           className="mt-9 max-w-2xl text-center"
@@ -197,6 +229,30 @@ export default function Hero() {
         </div>
       </div>
     </section>
+  );
+}
+
+// Fotos reais da clínica, lado a lado no desktop. No mobile, mostra uma
+// por vez com scroll horizontal (snap) em vez de espremer todas na tela.
+function PhotoGallery() {
+  return (
+    <div
+      className="grid h-full auto-cols-[100%] grid-flow-col gap-3 overflow-x-auto snap-x snap-mandatory scrollbar-hide sm:auto-cols-fr sm:overflow-visible"
+    >
+      {CLINIC_PHOTOS.map((photo) => (
+        <div
+          key={photo.alt}
+          className="h-full snap-center overflow-hidden rounded-2xl border border-ink/8 bg-mist"
+        >
+          <img
+            src={photo.src}
+            alt={photo.alt}
+            className="h-full w-full object-cover"
+            loading="lazy"
+          />
+        </div>
+      ))}
+    </div>
   );
 }
 
