@@ -1,6 +1,6 @@
 import {
   Anchor,
-  Sparkles,
+  Smile,
   HeartPulse,
   Baby,
   Layers,
@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 
 // Ícones escolhidos por relação semântica com o procedimento — não "dente genérico".
-// Implante = ancoragem no osso (Anchor); estética = brilho (Sparkles);
+// Implante = ancoragem no osso (Anchor); estética = o próprio sorriso (Smile);
 // endodontia = tratar a polpa viva e eliminar a dor (HeartPulse);
 // odontopediatria = criança (Baby); próteses = reposição/camadas (Layers);
 // prevenção = proteção (ShieldCheck).
@@ -21,7 +21,7 @@ export const SERVICES = [
     featured: true,
   },
   {
-    icon: Sparkles,
+    icon: Smile,
     title: "Estética do Sorriso",
     description:
       "Clareamento dental e lentes de contato dental para um sorriso natural e harmônico.",
