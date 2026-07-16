@@ -1,36 +1,154 @@
+import { useEffect, useRef, useState } from "react";
 import { Star, CalendarHeart, MessageCircle } from "lucide-react";
 import SmileArc from "./SmileArc";
 import { directWhatsAppUrl } from "../utils/whatsapp";
 
+// Altura extra de scroll que alimenta a animação de encolher a marca.
+// 180vh de seção com um wrapper sticky de 100vh dá ~80vh de "range" de scroll.
+const SECTION_HEIGHT_VH = 180;
+
 export default function Hero() {
+  const sectionRef = useRef(null);
+  const logoRef = useRef(null);
+  const leftBadgeRef = useRef(null);
+  const rightBadgeRef = useRef(null);
+  const contentRef = useRef(null);
+  const [reduced, setReduced] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setReduced(mq.matches);
+    const onChange = (e) => setReduced(e.matches);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
+
+  useEffect(() => {
+    if (reduced) return;
+
+    const section = sectionRef.current;
+    const logo = logoRef.current;
+    const content = contentRef.current;
+    const leftBadge = leftBadgeRef.current;
+    const rightBadge = rightBadgeRef.current;
+    if (!section || !logo || !content) return;
+
+    let rafId = null;
+
+    function apply() {
+      rafId = null;
+      const rect = section.getBoundingClientRect();
+      const scrollRange = rect.height - window.innerHeight;
+      const progress =
+        scrollRange > 0
+          ? Math.min(Math.max(-rect.top / scrollRange, 0), 1)
+          : 1;
+
+      // Logo grande -> pequena, sempre centralizada.
+      const scale = 1 - progress * 0.62;
+      logo.style.transform = `scale(${scale})`;
+
+      // Avaliações somem cedo, antes da logo terminar de encolher.
+      const badgeOpacity = Math.max(1 - progress / 0.22, 0);
+      const badgeShift = progress * 36;
+      if (leftBadge) {
+        leftBadge.style.opacity = String(badgeOpacity);
+        leftBadge.style.transform = `translateX(${-badgeShift}px)`;
+        leftBadge.style.pointerEvents = badgeOpacity < 0.05 ? "none" : "auto";
+      }
+      if (rightBadge) {
+        rightBadge.style.opacity = String(badgeOpacity);
+        rightBadge.style.transform = `translateX(${badgeShift}px)`;
+        rightBadge.style.pointerEvents = badgeOpacity < 0.05 ? "none" : "auto";
+      }
+
+      // Texto revela na segunda metade do scroll.
+      const textProgress = Math.min(Math.max((progress - 0.28) / 0.55, 0), 1);
+      content.style.opacity = String(textProgress);
+      content.style.transform = `translateY(${(1 - textProgress) * 28}px)`;
+      content.style.pointerEvents = textProgress < 0.4 ? "none" : "auto";
+    }
+
+    function onScroll() {
+      if (rafId) return;
+      rafId = requestAnimationFrame(apply);
+    }
+
+    apply();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      if (rafId) cancelAnimationFrame(rafId);
+    };
+  }, [reduced]);
+
   return (
     <section
       id="top"
-      className="relative overflow-hidden pt-28 pb-20 sm:pt-36 sm:pb-28"
+      ref={sectionRef}
+      className="relative"
+      style={reduced ? undefined : { height: `${SECTION_HEIGHT_VH}vh` }}
     >
-      {/* Atmosfera: gradiente suave na paleta da marca */}
       <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 -z-10"
+        className={`${
+          reduced ? "py-24" : "sticky top-0 h-screen"
+        } flex flex-col items-center justify-center overflow-hidden px-5 sm:px-8`}
       >
-        <div className="absolute -top-32 -right-24 h-96 w-96 rounded-full bg-mint/10 blur-3xl" />
-        <div className="absolute top-24 -left-32 h-96 w-96 rounded-full bg-sky/10 blur-3xl" />
-      </div>
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 -z-10"
+        >
+          <div className="absolute -top-32 -right-24 h-96 w-96 rounded-full bg-mint/10 blur-3xl" />
+          <div className="absolute top-24 -left-32 h-96 w-96 rounded-full bg-sky/10 blur-3xl" />
+        </div>
 
-      <div className="max-w-6xl mx-auto px-5 sm:px-8 grid lg:grid-cols-[1.1fr_0.9fr] gap-12 lg:gap-8 items-center">
-        <div className="animate-fade-up">
+        <div className="flex items-center justify-center gap-5 sm:gap-10">
+          <div
+            ref={leftBadgeRef}
+            className="hidden sm:block"
+            style={reduced ? { display: "none" } : undefined}
+          >
+            <ReviewBadge value="4.9" label="média no Google" />
+          </div>
+
+          <div
+            ref={logoRef}
+            className="flex flex-col items-center"
+            style={reduced ? { transform: "scale(0.6)" } : undefined}
+          >
+            <SmileArc className="w-28 sm:w-44 md:w-56" />
+            <p className="mt-3 font-display font-bold tracking-tight text-3xl sm:text-5xl md:text-6xl text-ink text-center whitespace-nowrap">
+              CENTRO<span className="text-skydeep">ODONTO</span>
+            </p>
+          </div>
+
+          <div
+            ref={rightBadgeRef}
+            className="hidden sm:block"
+            style={reduced ? { display: "none" } : undefined}
+          >
+            <ReviewBadge value="79" label="avaliações reais" />
+          </div>
+        </div>
+
+        <div
+          ref={contentRef}
+          className="mt-9 max-w-2xl text-center"
+          style={reduced ? undefined : { opacity: 0 }}
+        >
           <p className="inline-flex items-center gap-2 rounded-full border border-ink/10 bg-white/60 px-4 py-1.5 text-sm font-medium text-slate">
             <span className="h-2 w-2 rounded-full bg-mint" />
             Clínica odontológica em Anápolis · desde 2008
           </p>
 
-          <h1 className="mt-6 font-display font-bold text-ink text-4xl sm:text-5xl lg:text-[3.4rem] leading-[1.05] tracking-tight">
-            O sorriso que você merece,
-            <br className="hidden sm:block" /> cuidado pela clínica que{" "}
+          <h1 className="mt-6 font-display font-bold text-ink text-3xl sm:text-4xl md:text-5xl leading-[1.1] tracking-tight">
+            O sorriso que você merece, cuidado pela clínica que{" "}
             <span className="text-sky">Anápolis confia há 18 anos</span>.
           </h1>
 
-          <p className="mt-6 max-w-xl text-lg text-slate leading-relaxed">
+          <p className="mt-5 text-lg text-slate leading-relaxed">
             Especialistas em{" "}
             <strong className="text-ink font-semibold">
               implantes dentários
@@ -41,7 +159,7 @@ export default function Hero() {
             com 79 pacientes reais de Anápolis.
           </p>
 
-          <div className="mt-8 flex flex-col sm:flex-row gap-3">
+          <div className="mt-7 flex flex-col sm:flex-row items-center justify-center gap-3">
             <a
               href="#agendar"
               className="inline-flex items-center justify-center gap-2 rounded-full bg-skydeep px-7 py-3.5 text-base font-semibold text-white shadow-lg shadow-sky/20 hover:bg-[#025a8a] hover:-translate-y-0.5 transition-all"
@@ -60,7 +178,7 @@ export default function Hero() {
             </a>
           </div>
 
-          <div className="mt-8 flex items-center gap-3 text-sm text-slate">
+          <div className="mt-6 flex items-center justify-center gap-3 text-sm text-slate">
             <div className="flex" aria-hidden="true">
               {Array.from({ length: 5 }).map((_, i) => (
                 <Star
@@ -76,22 +194,21 @@ export default function Hero() {
             </span>
           </div>
         </div>
-
-        {/* Assinatura visual: arco de sorriso self-drawing */}
-        <div className="relative flex items-center justify-center">
-          <div className="relative w-full max-w-md aspect-[4/3] rounded-3xl bg-gradient-to-br from-mist to-white border border-ink/5 shadow-xl shadow-sky/5 flex items-center justify-center overflow-hidden">
-            <SmileArc className="w-4/5" />
-            <div className="absolute bottom-5 left-1/2 -translate-x-1/2 text-center">
-              <p className="font-display font-semibold text-ink text-sm">
-                Tecnologia + acolhimento
-              </p>
-              <p className="text-xs text-slate">
-                Tratamento rápido, eficaz e sem dor
-              </p>
-            </div>
-          </div>
-        </div>
       </div>
     </section>
+  );
+}
+
+function ReviewBadge({ value, label }) {
+  return (
+    <div className="flex flex-col items-center gap-1 rounded-2xl border border-ink/8 bg-white/90 px-5 py-4 shadow-lg shadow-ink/5 shrink-0">
+      <div className="flex" aria-hidden="true">
+        {Array.from({ length: 5 }).map((_, i) => (
+          <Star key={i} size={13} className="fill-amber-400 text-amber-400" />
+        ))}
+      </div>
+      <div className="font-display font-bold text-xl text-ink">{value}</div>
+      <div className="text-xs text-slate whitespace-nowrap">{label}</div>
+    </div>
   );
 }
