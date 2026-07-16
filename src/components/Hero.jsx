@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Star, CalendarHeart, MessageCircle } from "lucide-react";
-import SmileArc from "./SmileArc";
+import logo from "../assets/logo.png";
 import { directWhatsAppUrl } from "../utils/whatsapp";
 
 // Altura extra de scroll que alimenta a animação de encolher a marca.
@@ -118,10 +118,11 @@ export default function Hero() {
             className="flex flex-col items-center"
             style={reduced ? { transform: "scale(0.6)" } : undefined}
           >
-            <SmileArc className="w-28 sm:w-44 md:w-56" />
-            <p className="mt-3 font-display font-bold tracking-tight text-3xl sm:text-5xl md:text-6xl text-ink text-center whitespace-nowrap">
-              CENTRO<span className="text-skydeep">ODONTO</span>
-            </p>
+            <img
+              src={logo}
+              alt="Centro Odonto"
+              className="w-56 sm:w-80 md:w-[26rem] h-auto"
+            />
           </div>
 
           <div
