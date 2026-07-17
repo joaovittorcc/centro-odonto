@@ -116,7 +116,7 @@ export default function Hero() {
     >
       <div
         className={`${
-          reduced ? "py-24" : "sticky top-0 h-screen"
+          reduced ? "py-24" : "sticky top-0 h-screen pt-20 sm:pt-24"
         } flex flex-col items-center justify-center overflow-hidden px-5 sm:px-8`}
       >
         <div
