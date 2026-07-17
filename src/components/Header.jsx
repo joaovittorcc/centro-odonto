@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
-import logo from "../assets/logo.png";
+import Logo from "./Logo";
 
 const LINKS = [
   { href: "#especialidades", label: "Especialidades" },
@@ -30,7 +30,7 @@ export default function Header() {
     >
       <div className="max-w-6xl mx-auto px-5 sm:px-8 h-16 flex items-center justify-between">
         <a href="#top" className="flex items-center" aria-label="Centro Odonto — início">
-          <img src={logo} alt="Centro Odonto" className="h-8 w-auto" />
+          <Logo iconClass="h-8 w-auto" textClass="text-xl" />
         </a>
 
         <nav className="hidden md:flex items-center gap-8" aria-label="Principal">

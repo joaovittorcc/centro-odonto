@@ -1,5 +1,5 @@
 import { MapPin, Clock, MessageCircle } from "lucide-react";
-import logo from "../assets/logo.png";
+import Logo from "./Logo";
 import { directWhatsAppUrl } from "../utils/whatsapp";
 
 export default function Footer() {
@@ -7,7 +7,7 @@ export default function Footer() {
     <footer className="bg-clinical border-t border-ink/8 px-5 sm:px-8 pt-16 pb-8">
       <div className="max-w-6xl mx-auto grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
         <div className="lg:col-span-1">
-          <img src={logo} alt="Centro Odonto" className="h-7 w-auto" />
+          <Logo iconClass="h-7 w-auto" textClass="text-lg" />
           <p className="mt-3 text-sm text-slate leading-relaxed">
             Clínica de estética dental em Anápolis. Implantes, periodontia e
             cuidado para toda a família desde 2008.

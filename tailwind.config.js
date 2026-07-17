@@ -12,10 +12,13 @@ export default {
         skydeep: "#0369A1",  // azul p/ botões e texto pequeno (AA com branco/fundo claro)
         mint: "#10B981",     // verde menta (acento secundário / preenchimentos)
         mintdeep: "#047857", // verde p/ texto pequeno em fundo claro (AA)
+        brandcyan: "#00ABDE", // ciano do wordmark da marca (logo)
+        brandnavy: "#172C5A", // azul marinho do ícone da marca (logo)
       },
       fontFamily: {
         display: ["Outfit", "sans-serif"],
         sans: ["Inter", "sans-serif"],
+        brand: ["'Baloo 2'", "cursive"], // wordmark da logo (arredondada)
       },
       keyframes: {
         "fade-up": {

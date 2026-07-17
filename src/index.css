@@ -18,6 +18,34 @@ html {
   border-radius: 4px;
 }
 
+/* Indicador "role para descobrir" — seta com leve balanço vertical */
+@keyframes nudge-down {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(6px);
+  }
+}
+.nudge-down {
+  animation: nudge-down 1.6s ease-in-out infinite;
+}
+
+/* Bolhas de avaliação flutuando de leve no Hero */
+@keyframes float-soft {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+.float-soft {
+  animation: float-soft 5s ease-in-out infinite;
+}
+
 /* Reveal ao scroll — estado inicial */
 .reveal {
   opacity: 0;

@@ -27,3 +27,13 @@ export const TESTIMONIALS = [
       "Melhor atendimento, doutora Thaís e doutor João Mauro excelentes profissionais... muitos anos de atendimento.",
   },
 ];
+
+// Trechos curtos das mesmas avaliações reais, para as "bolhas" flutuantes do
+// Hero. São recortes fiéis (sem parafrasear) do texto original de cada paciente.
+export const HERO_REVIEWS = [
+  { name: "Priscila", quote: "Melhor lugar! Me sinto acolhida aqui." },
+  { name: "Adriana", quote: "Atendimento impecável. Recomendo muito!" },
+  { name: "Vanita", quote: "Um trabalho maravilhoso. Só tenho a agradecer!" },
+  { name: "Maria Cleude", quote: "Me senti segura. Confio muito nele." },
+  { name: "Daniela", quote: "Excelentes profissionais." },
+];

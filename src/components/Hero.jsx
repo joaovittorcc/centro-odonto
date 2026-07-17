@@ -1,18 +1,25 @@
 import { useEffect, useRef, useState } from "react";
-import { Star, CalendarHeart, MessageCircle } from "lucide-react";
-import logo from "../assets/logo.png";
+import { Star, CalendarHeart, MessageCircle, ChevronDown } from "lucide-react";
+import Logo from "./Logo";
+import { HERO_REVIEWS } from "../data/testimonials";
 import { directWhatsAppUrl } from "../utils/whatsapp";
 
 // Altura extra de scroll que alimenta a animação de encolher a marca.
-// 170vh de seção com um wrapper sticky de 100vh dá ~70vh de "range" de
-// scroll para o encolhimento da logo e a revelação do texto.
 const SECTION_HEIGHT_VH = 170;
+
+// Posição de cada bolha de avaliação no frame (desktop). Preenchem o espaço
+// vazio ao redor da logo centralizada. `delay` dá um float dessincronizado.
+const BUBBLE_POS = [
+  "left-[9%] top-[15%]",
+  "right-[10%] top-[17%]",
+  "left-[7%] bottom-[22%]",
+  "right-[8%] bottom-[20%]",
+];
 
 export default function Hero() {
   const sectionRef = useRef(null);
   const logoRef = useRef(null);
-  const leftBadgeRef = useRef(null);
-  const rightBadgeRef = useRef(null);
+  const decorRef = useRef(null);
   const contentRef = useRef(null);
   const [reduced, setReduced] = useState(false);
 
@@ -30,8 +37,7 @@ export default function Hero() {
     const section = sectionRef.current;
     const logoEl = logoRef.current;
     const content = contentRef.current;
-    const leftBadge = leftBadgeRef.current;
-    const rightBadge = rightBadgeRef.current;
+    const decor = decorRef.current;
     if (!section || !logoEl || !content) return;
 
     let rafId = null;
@@ -46,21 +52,16 @@ export default function Hero() {
           : 1;
 
       // Logo grande -> pequena, sempre centralizada.
-      const scale = 1 - progress * 0.62;
+      const scale = 1 - progress * 0.58;
       logoEl.style.transform = `scale(${scale})`;
 
-      // Avaliações somem cedo, antes da logo terminar de encolher.
-      const badgeOpacity = Math.max(1 - progress / 0.25, 0);
-      const badgeShift = progress * 36;
-      if (leftBadge) {
-        leftBadge.style.opacity = String(badgeOpacity);
-        leftBadge.style.transform = `translateX(${-badgeShift}px)`;
-        leftBadge.style.pointerEvents = badgeOpacity < 0.05 ? "none" : "auto";
-      }
-      if (rightBadge) {
-        rightBadge.style.opacity = String(badgeOpacity);
-        rightBadge.style.transform = `translateX(${badgeShift}px)`;
-        rightBadge.style.pointerEvents = badgeOpacity < 0.05 ? "none" : "auto";
+      // Bolhas + selos + indicador somem cedo, subindo levemente.
+      const decorOpacity = Math.max(1 - progress / 0.25, 0);
+      if (decor) {
+        decor.style.opacity = String(decorOpacity);
+        decor.style.transform = `translateY(${-progress * 28}px) scale(${
+          1 - progress * 0.06
+        })`;
       }
 
       // Texto revela na segunda metade do scroll.
@@ -105,39 +106,57 @@ export default function Hero() {
           <div className="absolute top-24 -left-32 h-96 w-96 rounded-full bg-sky/10 blur-3xl" />
         </div>
 
-        <div className="flex items-center justify-center gap-5 sm:gap-10">
+        {/* Camada decorativa: selos + bolhas de avaliação + indicador de
+            scroll. Some junto conforme a página desce. Só com motion. */}
+        {!reduced && (
           <div
-            ref={leftBadgeRef}
-            className="hidden sm:block"
-            style={reduced ? { display: "none" } : undefined}
+            ref={decorRef}
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 z-10"
           >
-            <ReviewBadge value="4.9" label="média no Google" />
-          </div>
+            <div className="hidden md:block absolute left-[5%] top-[32%] float-soft">
+              <StatBadge value="4.9" label="média no Google" />
+            </div>
+            <div
+              className="hidden md:block absolute right-[5%] top-[32%] float-soft"
+              style={{ animationDelay: "1.2s" }}
+            >
+              <StatBadge value="79" label="avaliações reais" />
+            </div>
 
-          <div
-            ref={logoRef}
-            className="flex flex-col items-center"
-            style={reduced ? { transform: "scale(0.65)" } : undefined}
-          >
-            <img
-              src={logo}
-              alt="Centro Odonto"
-              className="w-56 sm:w-80 md:w-[26rem] h-auto"
-            />
-          </div>
+            {HERO_REVIEWS.slice(0, 4).map((r, i) => (
+              <div
+                key={r.name}
+                className={`hidden lg:block absolute ${BUBBLE_POS[i]} float-soft`}
+                style={{ animationDelay: `${i * 0.9}s` }}
+              >
+                <ReviewBubble quote={r.quote} name={r.name} />
+              </div>
+            ))}
 
-          <div
-            ref={rightBadgeRef}
-            className="hidden sm:block"
-            style={reduced ? { display: "none" } : undefined}
-          >
-            <ReviewBadge value="79" label="avaliações reais" />
+            <div className="absolute bottom-[4%] left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 text-slate">
+              <span className="text-xs font-medium uppercase tracking-widest">
+                Role para descobrir
+              </span>
+              <ChevronDown size={22} className="nudge-down text-skydeep" />
+            </div>
           </div>
+        )}
+
+        <div
+          ref={logoRef}
+          style={reduced ? { transform: "scale(0.7)" } : undefined}
+        >
+          <Logo
+            variant="stack"
+            iconClass="w-24 sm:w-32 md:w-40 h-auto"
+            textClass="text-5xl sm:text-6xl md:text-7xl"
+          />
         </div>
 
         <div
           ref={contentRef}
-          className="mt-9 max-w-2xl text-center"
+          className="relative z-20 mt-10 max-w-2xl text-center"
           style={reduced ? undefined : { opacity: 0 }}
         >
           <p className="inline-flex items-center gap-2 rounded-full border border-ink/10 bg-white/60 px-4 py-1.5 text-sm font-medium text-slate">
@@ -201,9 +220,9 @@ export default function Hero() {
   );
 }
 
-function ReviewBadge({ value, label }) {
+function StatBadge({ value, label }) {
   return (
-    <div className="flex flex-col items-center gap-1 rounded-2xl border border-ink/8 bg-white/90 px-5 py-4 shadow-lg shadow-ink/5 shrink-0">
+    <div className="flex flex-col items-center gap-1 rounded-2xl border border-ink/8 bg-white/90 px-5 py-4 shadow-lg shadow-ink/5">
       <div className="flex" aria-hidden="true">
         {Array.from({ length: 5 }).map((_, i) => (
           <Star key={i} size={13} className="fill-amber-400 text-amber-400" />
@@ -211,6 +230,20 @@ function ReviewBadge({ value, label }) {
       </div>
       <div className="font-display font-bold text-xl text-ink">{value}</div>
       <div className="text-xs text-slate whitespace-nowrap">{label}</div>
+    </div>
+  );
+}
+
+function ReviewBubble({ quote, name }) {
+  return (
+    <div className="w-56 rounded-2xl border border-ink/8 bg-white/90 px-4 py-3 shadow-lg shadow-ink/5 backdrop-blur-sm">
+      <div className="flex" aria-hidden="true">
+        {Array.from({ length: 5 }).map((_, i) => (
+          <Star key={i} size={12} className="fill-amber-400 text-amber-400" />
+        ))}
+      </div>
+      <p className="mt-1.5 text-sm text-ink leading-snug">“{quote}”</p>
+      <p className="mt-1 text-xs font-medium text-slate">{name}</p>
     </div>
   );
 }
