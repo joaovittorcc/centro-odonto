@@ -114,11 +114,12 @@ export default function Hero() {
             aria-hidden="true"
             className="pointer-events-none absolute inset-0 z-10"
           >
-            <div className="hidden md:block absolute left-[5%] top-[32%] float-soft">
+            {/* Desktop (lg+): selos flanqueando + bolhas nos cantos */}
+            <div className="hidden lg:block absolute left-[5%] top-[32%] float-soft">
               <StatBadge value="4.9" label="média no Google" />
             </div>
             <div
-              className="hidden md:block absolute right-[5%] top-[32%] float-soft"
+              className="hidden lg:block absolute right-[5%] top-[32%] float-soft"
               style={{ animationDelay: "1.2s" }}
             >
               <StatBadge value="79" label="avaliações reais" />
@@ -133,6 +134,18 @@ export default function Hero() {
                 <ReviewBubble quote={r.quote} name={r.name} />
               </div>
             ))}
+
+            {/* Mobile/tablet (<lg): mesma prova social empilhada e
+                centralizada abaixo da logo, preenchendo o frame */}
+            <div className="lg:hidden absolute inset-x-0 top-[46%] flex flex-col items-center gap-3 px-6">
+              <div className="flex gap-3">
+                <StatBadge value="4.9" label="média no Google" />
+                <StatBadge value="79" label="avaliações reais" />
+              </div>
+              {HERO_REVIEWS.slice(0, 2).map((r) => (
+                <ReviewBubble key={r.name} quote={r.quote} name={r.name} />
+              ))}
+            </div>
 
             <div className="absolute bottom-[4%] left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 text-slate">
               <span className="text-xs font-medium uppercase tracking-widest">
