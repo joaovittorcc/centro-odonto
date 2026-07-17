@@ -1,5 +1,6 @@
 import Header from "./components/Header";
 import Hero from "./components/Hero";
+import Gallery from "./components/Gallery";
 import SocialProof from "./components/SocialProof";
 import About from "./components/About";
 import Services from "./components/Services";
@@ -14,6 +15,7 @@ export default function App() {
       <Header />
       <main>
         <Hero />
+        <Gallery />
         <SocialProof />
         <About />
         <Services />
