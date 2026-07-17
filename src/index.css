@@ -18,16 +18,14 @@ html {
   border-radius: 4px;
 }
 
-/* Assinatura: traçado do arco de sorriso no Hero (line-draw) */
-.smile-path {
-  stroke-dasharray: 1;
-  stroke-dashoffset: 1;
-  animation: smile-draw 1.6s cubic-bezier(0.65, 0, 0.35, 1) 0.25s forwards;
+/* Esconde a barra de rolagem do carrossel de fotos no mobile,
+   mantendo o scroll horizontal funcional (swipe/drag). */
+.scrollbar-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
-@keyframes smile-draw {
-  to {
-    stroke-dashoffset: 0;
-  }
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 }
 
 /* Reveal ao scroll — estado inicial */
