@@ -1,6 +1,5 @@
-// [PLACEHOLDER — substituir pelo número real de WhatsApp da clínica antes de enviar a demo]
 // Formato: 55 + DDD + número (somente dígitos). Ex.: 5562999999999
-const WHATSAPP_NUMBER = "55XXXXXXXXXXX";
+const WHATSAPP_NUMBER = "5562985037650";
 
 /**
  * Monta o link wa.me com a mensagem pré-preenchida a partir dos dados
