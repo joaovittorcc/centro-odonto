@@ -55,6 +55,16 @@ export default function Hero() {
       const scale = 1 - progress * 0.58;
       logoEl.style.transform = `scale(${scale})`;
 
+      // O transform acima só encolhe visualmente — o espaço reservado no
+      // layout continua do tamanho original, sobrando pouca altura pro
+      // conteúdo (título/botões/estrelas) em telas baixas, que acabava
+      // cortado pelo overflow-hidden da seção. Compensa com margem
+      // negativa proporcional ao quanto a logo encolheu de verdade.
+      const logoHeight = logoEl.offsetHeight;
+      const shrinkGap = (logoHeight * (1 - scale)) / 2;
+      logoEl.style.marginTop = `${-shrinkGap}px`;
+      logoEl.style.marginBottom = `${-shrinkGap}px`;
+
       // Bolhas + selos + indicador somem cedo, subindo levemente.
       const decorOpacity = Math.max(1 - progress / 0.25, 0);
       if (decor) {
@@ -173,7 +183,7 @@ export default function Hero() {
 
         <div
           ref={contentRef}
-          className="relative z-20 mt-10 max-w-2xl text-center"
+          className="relative z-20 mt-6 sm:mt-10 max-w-2xl text-center"
           style={reduced ? undefined : { opacity: 0 }}
         >
           <p className="inline-flex items-center gap-2 rounded-full border border-ink/10 bg-white/60 px-4 py-1.5 text-sm font-medium text-slate">
@@ -181,12 +191,12 @@ export default function Hero() {
             Clínica odontológica em Anápolis · desde 2008
           </p>
 
-          <h1 className="mt-6 font-display font-bold text-ink text-3xl sm:text-4xl md:text-5xl leading-[1.1] tracking-tight">
+          <h1 className="mt-4 sm:mt-6 font-display font-bold text-ink text-3xl sm:text-4xl md:text-5xl leading-[1.1] tracking-tight">
             O sorriso que você merece, cuidado pela clínica que{" "}
             <span className="text-sky">Anápolis confia há 18 anos</span>.
           </h1>
 
-          <p className="mt-5 text-lg text-slate leading-relaxed">
+          <p className="mt-3 sm:mt-5 text-lg text-slate leading-relaxed">
             Especialistas em{" "}
             <strong className="text-ink font-semibold">
               implantes dentários
@@ -197,7 +207,7 @@ export default function Hero() {
             com 79 pacientes reais de Anápolis.
           </p>
 
-          <div className="mt-7 flex flex-col sm:flex-row items-center justify-center gap-3">
+          <div className="mt-5 sm:mt-7 flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3">
             <a
               href="#agendar"
               className="inline-flex items-center justify-center gap-2 rounded-full bg-skydeep px-7 py-3.5 text-base font-semibold text-white shadow-lg shadow-sky/20 hover:bg-[#025a8a] hover:-translate-y-0.5 transition-all"
@@ -216,7 +226,7 @@ export default function Hero() {
             </a>
           </div>
 
-          <div className="mt-6 flex items-center justify-center gap-3 text-sm text-slate">
+          <div className="mt-4 sm:mt-6 flex items-center justify-center gap-3 text-sm text-slate">
             <div className="flex" aria-hidden="true">
               {Array.from({ length: 5 }).map((_, i) => (
                 <Star
