@@ -136,18 +136,22 @@ export default function Hero() {
             ))}
 
             {/* Mobile/tablet (<lg): mesma prova social empilhada e
-                centralizada abaixo da logo, preenchendo o frame */}
-            <div className="lg:hidden absolute inset-x-0 top-[46%] flex flex-col items-center gap-3 px-6">
+                centralizada abaixo da logo, preenchendo o frame. Só 1
+                bolha (em vez de 2) para não colidir com o indicador de
+                scroll em telas baixas (ex.: iPhone SE, Android compacto). */}
+            <div className="lg:hidden absolute inset-x-0 top-[44%] flex flex-col items-center gap-3 px-6">
               <div className="flex gap-3">
                 <StatBadge value="4.9" label="média no Google" />
                 <StatBadge value="79" label="avaliações reais" />
               </div>
-              {HERO_REVIEWS.slice(0, 2).map((r) => (
+              {HERO_REVIEWS.slice(0, 1).map((r) => (
                 <ReviewBubble key={r.name} quote={r.quote} name={r.name} />
               ))}
             </div>
 
-            <div className="absolute bottom-[4%] left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 text-slate">
+            {/* Escondido em telas baixas: nessas alturas o conteúdo acima
+                já preenche o frame e o indicador acabaria sobre as bolhas. */}
+            <div className="absolute bottom-[4%] left-1/2 -translate-x-1/2 flex-col items-center gap-1 text-slate hidden [@media(min-height:700px)]:flex">
               <span className="text-xs font-medium uppercase tracking-widest">
                 Role para descobrir
               </span>
@@ -162,8 +166,8 @@ export default function Hero() {
         >
           <Logo
             variant="stack"
-            iconClass="w-24 sm:w-32 md:w-40 h-auto"
-            textClass="text-5xl sm:text-6xl md:text-7xl"
+            iconClass="w-16 min-[351px]:w-24 sm:w-32 md:w-40 h-auto"
+            textClass="text-3xl min-[351px]:text-5xl sm:text-6xl md:text-7xl"
           />
         </div>
 
